@@ -112,7 +112,12 @@ class Es2csv:
             search_args['q'] = query
 
         if '_all' not in self.opts.fields:
-            search_args['_source_include'] = ','.join(self.opts.fields)
+            ### MAKE A PR
+            ### ADD A ES VERSION CHECK
+            # IF ES<7 THEN
+            # search_args['_source_include'] = ','.join(self.opts.fields)
+            # IF ES>7 THEN
+            search_args['_source_includes'] = ','.join(self.opts.fields)
             self.csv_headers.extend([unicode(field, "utf-8") for field in self.opts.fields if '*' not in field])
 
         if self.opts.debug_mode:
@@ -124,7 +129,12 @@ class Es2csv:
             print('Sorting by: {}.'.format(', '.join(self.opts.sort)))
 
         res = self.es_conn.search(**search_args)
-        self.num_results = res['hits']['total']
+        ### TO MAKE A PR ###
+        ### ADD A ES VERSION CHECK
+        # IF ES<7 THEN
+        # self.num_results = res['hits']['total']
+        # IF ES>7 THEN
+        self.num_results = res['hits']['total']['value']
 
         print('Found {} results.'.format(self.num_results))
         if self.opts.debug_mode:
